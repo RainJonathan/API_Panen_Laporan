@@ -1,0 +1,31 @@
+{
+  "name": "api_panen_laporan",
+  "version": "1.0.0",
+  "description": "API untuk aplikasi pemanen",
+  "main": "index.js",
+  "scripts": {
+    "test": "\\"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RainJonathan/API_Panen_Laporan.git"
+  },
+  "keywords": [
+    "API"
+  ],
+  "author": "Rein",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RainJonathan/API_Panen_Laporan/issues"
+  },
+  "homepage": "https://github.com/RainJonathan/API_Panen_Laporan#readme",
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "joi": "^17.13.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.14.0"
+  }
+}
