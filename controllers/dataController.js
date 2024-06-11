@@ -67,22 +67,31 @@ const organizeDataByDateAndNama = (data, year, month) => {
 
 
 const getDataByMonth = async (req, res) => {
-    const { month } = req.params;
+    const { kebun, month, year } = req.params;
+    const validLocations = [
+        'thg', 'pkt', 'sm', 'bh1', 'bh2', 'bk1', 'bk2', 'pj', 'psb', 'rk',
+        'tt', 'kp', 'mb', 'tpil', 'kandir', 'dbr', 'hnd', 'ngl', 'brb', 
+        'pksthg', 'cdr', 'djl', 'ka', 'pku', 'sbb'
+    ];
+    // Validate kebun, month, and year parameters
+    const schema = Joi.object({
+        kebun: Joi.string().valid(...validLocations).required(),
+        month: Joi.number().integer().min(1).max(12).required(),
+        year: Joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
+    });
 
-    // Validate month parameter
-    const { error } = Joi.number().integer().min(1).max(12).validate(month);
+    const { error } = schema.validate({ kebun, month: parseInt(month), year: parseInt(year) });
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
     }
 
     try {
-        // Construct a SQL query to filter data by the month
-        const data = await prisma.$queryRaw`
-            SELECT * FROM sm_trs_gaji
-            WHERE MONTH(created_date) = ${month}
-        `;
+        // Construct a SQL query to filter data by the kebun, month, and year
+        const data = await prisma.$queryRawUnsafe(`
+            SELECT * FROM ${kebun}_trs_gaji
+            WHERE MONTH(created_date) = ${parseInt(month)} AND YEAR(created_date) = ${parseInt(year)}
+        `);
 
-        const year = new Date().getFullYear(); // Use current year or extract year if needed
         // Organize the fetched data by date and nama
         const organizedData = organizeDataByDateAndNama(data, year, month);
 

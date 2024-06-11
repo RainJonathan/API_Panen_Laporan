@@ -3,6 +3,6 @@ const router = express.Router();
 const dataController = require('../controllers/dataController');
 
 // Define route for fetching data by month
-router.get('/:month', dataController.getDataByMonth);
+router.get('/:kebun/:month/:year', dataController.getDataByMonth);
 
 module.exports = router;
