@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-
+require('dotenv').config();
 const pool = mysql.createPool({
     host: 'gpasolution.id',
     user: 'gpasolu1_gpasolu1',
