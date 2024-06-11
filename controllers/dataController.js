@@ -28,41 +28,38 @@ const generateDatesForMonth = (year, month) => {
 
 // Function to organize data by date and nama
 const organizeDataByDateAndNama = (data, year, month) => {
-  const organizedData = {};
-  const allDates = generateDatesForMonth(year, month);
+    const organizedData = {};
 
-  // Initialize organizedData with all dates in the month
-  allDates.forEach(date => {
-      organizedData[date] = {};
-      // Initialize all "nama" entries with 5 numbered entries
-      data.forEach(entry => {
-          const nama = entry.nama;
-          organizedData[date][nama] = {};
-          for (let i = 1; i <= 5; i++) {
-              organizedData[date][nama][i] = {};
-          }
-      });
-  });
+    const allDates = generateDatesForMonth(year, month);
 
-  // Populate organizedData with actual data entries
-  data.forEach(entry => {
-      const createdDate = entry.created_date ? new Date(entry.created_date) : null;
-      if (createdDate) {
-          const day = String(createdDate.getDate()).padStart(2, '0');
-          const formattedDate = `${day}-${String(month).padStart(2, '0')}-${year}`;
-          const nama = entry.nama;
+    // Loop through each entry and organize by nama, number, and date
+    data.forEach(entry => {
+        const createdDate = new Date(entry.created_date);
+        const day = String(createdDate.getDate()).padStart(2, '0');
+        const formattedDate = `${day}-${String(month).padStart(2, '0')}-${year}`;
+        const nama = entry.nama;
 
-          // Find the first empty spot (key) in the "nama" entry and assign the entry to it
-          for (let i = 1; i <= 5; i++) {
-              if (Object.keys(organizedData[formattedDate][nama][i]).length === 0) {
-                  organizedData[formattedDate][nama][i] = entry;
-                  break;
-              }
-          }
-      }
-  });
+        // Initialize the nama entry if it doesn't exist
+        if (!organizedData[nama]) {
+            organizedData[nama] = {};
+            for (let i = 1; i <= 5; i++) {
+                organizedData[nama][i] = {};
+                allDates.forEach(date => {
+                    organizedData[nama][i][date] = {};
+                });
+            }
+        }
 
-  return organizedData;
+        // Find the first empty spot (key) in the "nama" entry for the current date and assign the entry to it
+        for (let i = 1; i <= 5; i++) {
+            if (Object.keys(organizedData[nama][i][formattedDate]).length === 0) {
+                organizedData[nama][i][formattedDate] = entry;
+                break;
+            }
+        }
+    });
+
+    return organizedData;
 };
 
 
