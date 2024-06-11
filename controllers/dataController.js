@@ -1,6 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const mysql = require('mysql2/promise');
 const Joi = require('joi');
+const pool = require('../db/config'); // Import the pool from db.js
 
 // Function to stringify BigInt values
 const stringifyBigInt = (key, value) => {
@@ -68,11 +68,14 @@ const organizeDataByDateAndNama = (data, year, month) => {
 
 const getDataByMonth = async (req, res) => {
     const { kebun, month, year } = req.params;
+
+    // List of valid kebun locations in lowercase
     const validLocations = [
         'thg', 'pkt', 'sm', 'bh1', 'bh2', 'bk1', 'bk2', 'pj', 'psb', 'rk',
         'tt', 'kp', 'mb', 'tpil', 'kandir', 'dbr', 'hnd', 'ngl', 'brb', 
         'pksthg', 'cdr', 'djl', 'ka', 'pku', 'sbb'
     ];
+
     // Validate kebun, month, and year parameters
     const schema = Joi.object({
         kebun: Joi.string().valid(...validLocations).required(),
@@ -87,13 +90,14 @@ const getDataByMonth = async (req, res) => {
 
     try {
         // Construct a SQL query to filter data by the kebun, month, and year
-        const data = await prisma.$queryRawUnsafe(`
+        const query = `
             SELECT * FROM ${kebun}_trs_gaji
-            WHERE MONTH(created_date) = ${parseInt(month)} AND YEAR(created_date) = ${parseInt(year)}
-        `);
+            WHERE MONTH(created_date) = ? AND YEAR(created_date) = ?
+        `;
+        const [rows] = await pool.execute(query, [parseInt(month), parseInt(year)]);
 
         // Organize the fetched data by date and nama
-        const organizedData = organizeDataByDateAndNama(data, year, month);
+        const organizedData = organizeDataByDateAndNama(rows, parseInt(year), parseInt(month));
 
         // Serialize the data, handling BigInt values
         const serializedData = JSON.parse(JSON.stringify(organizedData, stringifyBigInt));

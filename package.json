@@ -20,12 +20,9 @@
   },
   "homepage": "https://github.com/RainJonathan/API_Panen_Laporan#readme",
   "dependencies": {
-    "@prisma/client": "^5.14.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "joi": "^17.13.1"
-  },
-  "devDependencies": {
-    "prisma": "^5.14.0"
+    "joi": "^17.13.1",
+    "mysql2": "^3.10.0"
   }
 }
