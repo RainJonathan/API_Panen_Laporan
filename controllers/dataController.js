@@ -1,4 +1,4 @@
-const mysql = require('mysql2/promise');
+
 const Joi = require('joi');
 const pool = require('../db/config'); // Import the pool from db.js
 
